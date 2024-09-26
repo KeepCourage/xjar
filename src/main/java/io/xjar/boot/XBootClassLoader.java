@@ -5,7 +5,8 @@ import io.xjar.XEncryptor;
 import io.xjar.XKit;
 import io.xjar.key.XKey;
 import io.xjar.reflection.XReflection;
-import org.springframework.boot.loader.LaunchedURLClassLoader;
+import org.springframework.boot.loader.launch.LaunchedClassLoader;
+import org.springframework.boot.loader.net.protocol.jar.JarUrlClassLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2018/11/23 23:04
  */
-public class XBootClassLoader extends LaunchedURLClassLoader {
+public class XBootClassLoader extends JarUrlClassLoader {
     private final XBootURLHandler xBootURLHandler;
     private final Object urlClassPath;
     private final Method getResource;
@@ -36,7 +37,7 @@ public class XBootClassLoader extends LaunchedURLClassLoader {
     }
 
     public XBootClassLoader(URL[] urls, ClassLoader parent, XDecryptor xDecryptor, XEncryptor xEncryptor, XKey xKey) throws Exception {
-        super(urls, parent);
+        super( urls, parent);
         this.xBootURLHandler = new XBootURLHandler(xDecryptor, xEncryptor, xKey, this);
         this.urlClassPath = XReflection.field(URLClassLoader.class, "ucp").get(this).value();
         this.getResource = XReflection.method(urlClassPath.getClass(), "getResource", String.class).method();
@@ -46,6 +47,7 @@ public class XBootClassLoader extends LaunchedURLClassLoader {
 
     @Override
     public URL findResource(String name) {
+        System.out.println("查询资源 -> %s".formatted(name));
         URL url = super.findResource(name);
         if (url == null) {
             return null;
