@@ -156,6 +156,7 @@ public class XJarURLConnection extends JarURLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
+        //System.out.println("get getInputStream");
         InputStream in = jarURLConnection.getInputStream();
         return xDecryptor.decrypt(xKey, in);
     }

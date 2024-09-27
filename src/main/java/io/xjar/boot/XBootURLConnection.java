@@ -156,6 +156,8 @@ public class XBootURLConnection extends JarURLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
+    //    System.out.println(System.currentTimeMillis() + "xbootconn.getInputStream");
+
         InputStream in = jarURLConnection.getInputStream();
         return xDecryptor.decrypt(xKey, in);
     }

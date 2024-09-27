@@ -5,8 +5,9 @@ import io.xjar.XEncryptor;
 import io.xjar.XKit;
 import io.xjar.key.XKey;
 import io.xjar.reflection.XReflection;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.springframework.boot.loader.launch.LaunchedClassLoader;
-import org.springframework.boot.loader.net.protocol.jar.JarUrlClassLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.Enumeration;
  * @author Payne 646742615@qq.com
  * 2018/11/23 23:04
  */
-public class XBootClassLoader extends JarUrlClassLoader {
+public class XBootClassLoader extends LaunchedClassLoader {
     private final XBootURLHandler xBootURLHandler;
     private final Object urlClassPath;
     private final Method getResource;
@@ -37,7 +38,7 @@ public class XBootClassLoader extends JarUrlClassLoader {
     }
 
     public XBootClassLoader(URL[] urls, ClassLoader parent, XDecryptor xDecryptor, XEncryptor xEncryptor, XKey xKey) throws Exception {
-        super( urls, parent);
+        super(true, urls, parent);
         this.xBootURLHandler = new XBootURLHandler(xDecryptor, xEncryptor, xKey, this);
         this.urlClassPath = XReflection.field(URLClassLoader.class, "ucp").get(this).value();
         this.getResource = XReflection.method(urlClassPath.getClass(), "getResource", String.class).method();
@@ -47,7 +48,6 @@ public class XBootClassLoader extends JarUrlClassLoader {
 
     @Override
     public URL findResource(String name) {
-        System.out.println("查询资源 -> %s".formatted(name));
         URL url = super.findResource(name);
         if (url == null) {
             return null;
@@ -70,8 +70,13 @@ public class XBootClassLoader extends JarUrlClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+        if(name.contains("UrlResource")) {
+            System.out.println("===================加载class %s".formatted(name));
+        }
+
+        Class<?> aClass = null;
         try {
-            return super.findClass(name);
+            aClass = super.findClass(name);
         } catch (ClassFormatError e) {
             String path = name.replace('.', '/').concat(".class");
             URL url = findResource(path);
@@ -86,11 +91,24 @@ public class XBootClassLoader extends JarUrlClassLoader {
                 URL codeSourceURL = (URL) getCodeSourceURL.invoke(resource);
                 CodeSigner[] codeSigners = (CodeSigner[]) getCodeSigners.invoke(resource);
                 CodeSource codeSource = new CodeSource(codeSourceURL, codeSigners);
-                return defineClass(name, bytes, 0, bytes.length, codeSource);
+                aClass = defineClass(name, bytes, 0, bytes.length, codeSource);
             } catch (Throwable t) {
                 throw new ClassNotFoundException(name, t);
             }
         }
+        if(name.equals("class org.springframework.core.io.UrlResource")) {
+            injectcode(aClass);
+        }
+        return aClass;
+    }
+
+    private void injectcode(Class<?> aClass) {
+
+        ClassWriter a = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        ClassReader classReader = new ClassReader(aClass);
+        val classVisitor = ChangeVersionVisitor(Opcodes.ASM7, classWriter)
+        classReader.accept(classVisitor, ClassReader.SKIP_CODE)
+
     }
 
     private class XBootEnumeration implements Enumeration<URL> {
