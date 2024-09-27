@@ -1,6 +1,6 @@
 # XJar [![](https://jitpack.io/v/core-lib/xjar.svg)](https://jitpack.io/#core-lib/xjar)
 
-此版本支持springboot3, 在v3.2.3验证通过。
+此版本支持springboot3+jdk17, 在v3.2.3验证通过。
 
 由于原来xjar对springboot3不支持,导致不能使用，故拉取此分支支持springboot3。
 
