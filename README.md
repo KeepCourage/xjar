@@ -1,4 +1,27 @@
 # XJar [![](https://jitpack.io/v/core-lib/xjar.svg)](https://jitpack.io/#core-lib/xjar)
+
+此版本支持springboot3, 在v3.2.3验证通过。
+
+由于原来xjar对springboot3不支持,导致不能使用，故拉取此分支支持springboot3。
+
+实现原理：
+
+由于springboot3中, `org.springframework.core.io.UrlResource.createRelative`方法重新了，导致不能继承全局的`URLStreamHandler`。
+
+原理很简单，在类加载过程中中使用`asm`替换动态替换该函数为老版本的实现。
+
+使用方式：
+
+由于源码未上传至maven中央仓库，所以需要clone源码到本地，然后执行测试用例`Test.generationJar`方法生成加密包。
+
+启动命令:
+```
+xjar.exe java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -jar encrypted5.jar
+```
+
+其他操作和原来保持一致。
+
+
 GitHub: https://github.com/core-lib/xjar
 ### Spring Boot JAR 安全加密运行工具, 同时支持的原生JAR.
 ### 基于对JAR包内资源的加密以及拓展ClassLoader来构建的一套程序加密启动, 动态解密运行的方案, 避免源码泄露以及反编译.

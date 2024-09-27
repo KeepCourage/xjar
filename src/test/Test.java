@@ -1,10 +1,9 @@
 
 
 import io.xjar.XCryptos;
-import org.junit.Test;
 
 
-public class Test222 {
+public class Test {
 
     /**
      * 加密密码
@@ -26,8 +25,8 @@ public class Test222 {
      * 5. 到目标机器执行 /path/to/xjar /path/to/java [OPTIONS] -jar /path/to/encrypted.jar ,即可启动项目
      * @param args
      */
-    @Test
-    public void generationDevice5() {
+    @org.junit.Test
+    public void generationJar() {
 
         /**
          * 源码jars包全路径
