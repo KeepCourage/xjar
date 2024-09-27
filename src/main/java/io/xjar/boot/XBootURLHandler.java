@@ -46,21 +46,11 @@ public class XBootURLHandler extends Handler implements XConstants {
 
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
-        if(url.toString().contains("!/com/example/demo/")) {
-//            File tmp = new File("./test.txt");
-//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(tmp));
-//            outputStreamWriter.write(indexes.toString());
-//            outputStreamWriter.close();
-            //System.out.println("资源集合 %s".formatted(indexes.toString()));
-
-        }
         URLConnection urlConnection = super.openConnection(url);
         URLConnection res = indexes.toString().contains(url.toString())
                 && urlConnection instanceof JarURLConnection
                 ? new XBootURLConnection((JarURLConnection) urlConnection, xDecryptor, xEncryptor, xKey)
                 : urlConnection;
-        //System.out.println("%s, %s 线程 %s, %s 打开资源 %s".formatted( urlConnection instanceof JarURLConnection, System.currentTimeMillis(), Thread.currentThread().getId()+ "",indexes.toString().contains(url.toString()), url));
-
         return res;
     }
 

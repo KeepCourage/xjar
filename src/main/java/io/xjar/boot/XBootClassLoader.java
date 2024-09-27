@@ -87,7 +87,7 @@ public class XBootClassLoader extends LaunchedClassLoader {
                 XKit.transfer(in, bos);
                 byte[] bytes = bos.toByteArray();
                 if(name.equals("org.springframework.core.io.UrlResource")) {
-                    System.out.println("org.springframework.core.io.UrlResource 注入成功");
+                    System.out.println("org.springframework.core.io.UrlResource 动态注入成功");
                     bytes = injectcode(bytes);
                 }
                 Object resource = getResource.invoke(urlClassPath, path);
@@ -109,17 +109,6 @@ public class XBootClassLoader extends LaunchedClassLoader {
         // 使用自定义的ClassVisitor访问者对象，访问该类文件的结构
         classReader.accept(new AVisitor(ASM9, classWriter), SKIP_DEBUG);
         byte[] bytes = classWriter.toByteArray();
-        File f = new File("./tmp.class");
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(f);
-
-            fileOutputStream.write(bytes);
-            fileOutputStream.close();
-
-            System.out.println("新增成功");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         return bytes;
 
     }
