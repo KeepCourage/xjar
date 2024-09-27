@@ -6,9 +6,9 @@
 
 实现原理：
 
-由于springboot3中, `org.springframework.core.io.UrlResource.createRelative`方法重新了，导致不能继承全局的`URLStreamHandler`。
+由于springboot3中, `org.springframework.core.io.UrlResource.createRelative`方法更新重写了，导致不能继承全局的`URLStreamHandler`。
 
-原理很简单，在类加载过程中中使用`asm`替换动态替换该函数为老版本的实现。
+修改原理很简单，在类加载过程中中使用`asm`替换动态替换该函数为老版本的实现。
 
 使用方式：
 
