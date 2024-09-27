@@ -5,13 +5,12 @@ import io.xjar.XEncryptor;
 import io.xjar.XKit;
 import io.xjar.key.XKey;
 import io.xjar.reflection.XReflection;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.springframework.boot.loader.launch.LaunchedClassLoader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,6 +18,10 @@ import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Enumeration;
+
+import static org.objectweb.asm.ClassReader.EXPAND_FRAMES;
+import static org.objectweb.asm.ClassReader.SKIP_DEBUG;
+import static org.objectweb.asm.Opcodes.ASM9;
 
 /**
  * X类加载器
@@ -70,10 +73,6 @@ public class XBootClassLoader extends LaunchedClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        if(name.contains("UrlResource")) {
-            System.out.println("===================加载class %s".formatted(name));
-        }
-
         Class<?> aClass = null;
         try {
             aClass = super.findClass(name);
@@ -87,6 +86,10 @@ public class XBootClassLoader extends LaunchedClassLoader {
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 XKit.transfer(in, bos);
                 byte[] bytes = bos.toByteArray();
+                if(name.equals("org.springframework.core.io.UrlResource")) {
+                    System.out.println("org.springframework.core.io.UrlResource 注入成功");
+                    bytes = injectcode(bytes);
+                }
                 Object resource = getResource.invoke(urlClassPath, path);
                 URL codeSourceURL = (URL) getCodeSourceURL.invoke(resource);
                 CodeSigner[] codeSigners = (CodeSigner[]) getCodeSigners.invoke(resource);
@@ -96,18 +99,28 @@ public class XBootClassLoader extends LaunchedClassLoader {
                 throw new ClassNotFoundException(name, t);
             }
         }
-        if(name.equals("class org.springframework.core.io.UrlResource")) {
-            injectcode(aClass);
-        }
+
         return aClass;
     }
 
-    private void injectcode(Class<?> aClass) {
+    private byte[] injectcode(byte[] data) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS |ClassWriter.COMPUTE_FRAMES );
+        ClassReader classReader = new ClassReader(data);
+        // 使用自定义的ClassVisitor访问者对象，访问该类文件的结构
+        classReader.accept(new AVisitor(ASM9, classWriter), SKIP_DEBUG);
+        byte[] bytes = classWriter.toByteArray();
+        File f = new File("./tmp.class");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(f);
 
-        ClassWriter a = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        ClassReader classReader = new ClassReader(aClass);
-        val classVisitor = ChangeVersionVisitor(Opcodes.ASM7, classWriter)
-        classReader.accept(classVisitor, ClassReader.SKIP_CODE)
+            fileOutputStream.write(bytes);
+            fileOutputStream.close();
+
+            System.out.println("新增成功");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return bytes;
 
     }
 

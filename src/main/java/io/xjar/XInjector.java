@@ -46,6 +46,27 @@ public class XInjector {
             }
             zos.closeArchiveEntry();
         }
+
+        // 注入asm
+        Enumeration<Resource> resources2 = Loaders.ant().load("org/**");
+        while (resources2.hasMoreElements()) {
+            Resource resource = resources2.nextElement();
+            String name = resource.getName();
+            String directory = name.substring(0, name.lastIndexOf('/') + 1);
+            if (directories.add(directory)) {
+                JarArchiveEntry xDirEntry = new JarArchiveEntry(directory);
+                xDirEntry.setTime(System.currentTimeMillis());
+                zos.putArchiveEntry(xDirEntry);
+                zos.closeArchiveEntry();
+            }
+            JarArchiveEntry xJarEntry = new JarArchiveEntry(name);
+            xJarEntry.setTime(System.currentTimeMillis());
+            zos.putArchiveEntry(xJarEntry);
+            try (InputStream ris = resource.getInputStream()) {
+                XKit.transfer(ris, zos);
+            }
+            zos.closeArchiveEntry();
+        }
     }
 
 }
