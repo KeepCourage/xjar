@@ -1,16 +1,19 @@
-# XJar [![](https://jitpack.io/v/core-lib/xjar.svg)](https://jitpack.io/#core-lib/xjar)
+# XJar-springboot3 [![](https://jitpack.io/v/core-lib/xjar.svg)](https://jitpack.io/#core-lib/xjar)
 
-此版本支持springboot3+jdk17, 在v3.2.3验证通过。
 
-由于原来xjar对springboot3不支持,导致不能使用，故拉取此分支支持springboot3。
+## 功能变更
+此版本在springboot3.2.3+jdk17中验证通过。
 
-实现原理：
+#### 修改原因：
+由于主分支中xjar对springboot3不支持, 导致不能使用，故拉取此分支支持springboot3。
 
-由于springboot3中, `org.springframework.core.io.UrlResource.createRelative`方法更新重写了，导致不能继承全局的`URLStreamHandler`。
+##### 实现原理：
+
+在springboot3中, spring团队更新重写了`org.springframework.core.io.UrlResource.createRelative`方法，导致不能继承全局的`URLStreamHandler`。
 
 修改原理很简单，在类加载过程中中使用`asm`替换动态替换该函数为老版本的实现。
 
-使用方式：
+#### 使用方式：
 
 由于源码未上传至maven中央仓库，所以需要clone源码到本地，然后执行测试用例`Test.generationJar`方法生成加密包。
 
