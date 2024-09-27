@@ -2,7 +2,9 @@
 
 
 ## 环境支持
-此版本在springboot3.2.3+jdk17中验证通过。
+此版本在以下环境中验证通过：
+- springboot3.2.3+jdk17
+- springboot3.3.4+jdk17
 
 #### 功能变更：
 由于主分支中xjar对springboot3不支持, 导致不能使用，故拉取此分支支持springboot3。
