@@ -15,6 +15,8 @@
 
 实现原理很简单，在类加载过程中使用`asm`替换动态替换该函数字节码为老版本的实现。
 
+详细分析及实现见博客文章:[魔改xjar支持springboot3,](http://blog.mtils.com/posts/%E9%AD%94%E6%94%B9xjar%E6%94%AF%E6%8C%81springboot3/)
+
 #### 使用方式：
 
 由于源码未上传至maven中央仓库，所以需要clone源码到本地，然后执行测试用例`Test.generationJar`方法生成加密包。
