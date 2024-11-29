@@ -5,6 +5,7 @@
 此版本在以下环境中验证通过：
 - springboot3.2.3+jdk17
 - springboot3.3.4+jdk17
+- springboot3.4.0+jdk17
 
 #### 功能变更：
 由于主分支中xjar对springboot3不支持, 导致不能使用，故拉取此分支支持springboot3。
@@ -24,6 +25,11 @@
 启动命令:
 ```
 xjar.exe java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -jar encrypted5.jar
+```
+
+springboot将依赖单独抽出后启动方式:
+```
+xjar.exe java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED -Dloader.path=./lib -jar encrypted5.jar
 ```
 
 其他操作和原来保持一致。
