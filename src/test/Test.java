@@ -31,10 +31,10 @@ public class Test {
         /**
          * 源码jars包全路径
          */
-        String jarpath = "D:\\workspace\\xiudianer\\workspace\\transport-mqtt-device-v4\\branches\\4.0.0\\transport-mqtt-device-xjar\\src\\main\\java\\com\\xd\\device\\ad\\jars";
+        String jarpath = "D:\\workspace\\boot3\\target";
         try {
             XCryptos.encryption()
-                    .from(jarpath + "/demo-0.0.1-SNAPSHOT.jar")  // 加密的源文件
+                    .from(jarpath + "/boot3.jar")  // 加密的源文件
                     .use(password)
                     .exclude("/static/**/*")
                     .exclude("/META-INF/resources/**/*")
