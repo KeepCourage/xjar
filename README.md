@@ -34,6 +34,7 @@ xjar.exe java --add-opens java.base/jdk.internal.loader=ALL-UNNAMED --add-opens 
 
 其他操作和原来保持一致。
 
+----
 
 GitHub: https://github.com/core-lib/xjar
 ### Spring Boot JAR 安全加密运行工具, 同时支持的原生JAR.
